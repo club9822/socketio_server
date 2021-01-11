@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <title>Login</title>
+</head>
+
+<body>
+<form method="post" onsubmit="return onsubmit(event)" action="">
+    <div>
+        <p>username</p>
+        <input name="username" id="username" >
+    </div>
+    <button onclick="onsubmit(e)">
+        login
+    </button>
+</form>
+
+<script>
+    function onsubmit(e){
+      alert('ddd')
+      e.preventDefault();
+      var username =document.getElementById('username').nodeValue
+      alert(username)
+    }
+</script>
+</body>
+
+</html>
