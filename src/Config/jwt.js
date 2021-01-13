@@ -1,6 +1,5 @@
-import {Cookie} from "../utils/cookie";
-
-const jwt = require('jsonwebtoken');
+import {Cookie} from "../utils/cookie.js";
+import jwt  from 'jsonwebtoken'
 //import jwt from 'jsonwebtoken';
 
 export class JWT {
@@ -22,11 +21,12 @@ export class JWT {
     const {token}=cookies;
     try {
       if (!token) {
-        return res.status(401).json('You need to Login')
+        return res.redirect('/auth/login');
       }
       const decrypt = await jwt.verify(token, process.env.JWT_SECRET);
+      console.log('decrypt:::',decrypt)
       req.user = {
-        userId: decrypt.id,
+        userId: decrypt.userId,
         username: decrypt.username,
       };
       next();

@@ -1,25 +1,22 @@
-#!/usr/bin/env node
-
-
 /**
  * Module dependencies.
  */
-require('dotenv').config()
-var app = require('../app');
-var debug = require('debug')('socket:server');
-var http = require('http');
-var redisAdapter = require('socket.io-redis');
-var moment = require('moment');
-const Redis = require('ioredis');
-
-const onError = require('../utils/errorHandling').onError
-const normalizePort = require('../utils/errorHandling').normalizePort
-
+import dotenv from 'dotenv'
+import app from '../app.js';
+import debugModule from 'debug';
+import http from 'http';
+import redisAdapter from 'socket.io-redis';
+import moment from "moment";
+import Redis from 'ioredis';
+import {log} from "../utils/log.js";
+import {onError,normalizePort } from '../utils/errorHandling.js'
+const debug = debugModule('socket:server');
+dotenv.config()
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '3000');
 
 //https://github.com/socketio/socket.io-redis#cluster-example
 const redisStartupNodes = [
@@ -74,9 +71,12 @@ io.adapter(redisAdapter({ host: process.env.REDIS_SERVER_1, port: process.env.RE
 const nameSpace = '/';
 
 io.on('connection', function(socket) {
+
     console.log('____________________________________________________________________')
-    console.log('connection',socket)
+    const nikname= socket?.handshake?.headers?.username
+    console.log('connection nikname:',nikname)
     console.log('____________________________________________________________________')
+   socket['nickname']= nikname||''
    socket.on('disconnect',async function() {
     try {
       await io.of(nameSpace).adapter.remoteDisconnect(socket.id, true);
@@ -86,17 +86,17 @@ io.on('connection', function(socket) {
   });
 
   socket.on('joinRoom', async function(req,err,cb) {
-    const {username}=socket?.handshake?.headers
-    console.log('joinRoom::::: username:',username )
-    const {roomId,userId} = req
-    if(!roomId || !userId){
+    // const {username}=socket?.handshake?.headers
+    // console.log('joinRoom::::: username:',username )
+    const {roomId,username} = req
+    if(!roomId || !username){
       if(err){
-        err('userId or roomId error')
+        err('username or roomId error')
       }
       return;
     }
     try {
-      await io.of(nameSpace).adapter.remoteJoin(userId, roomId);
+      await io.of(nameSpace).adapter.remoteJoin(socket.id, roomId);
       await socket.broadcast.to(roomId).emit(
         '_user_join', {
           message: userId + '  :::: has joined!',
@@ -104,6 +104,7 @@ io.on('connection', function(socket) {
           roomId: roomId,
           userId: userId,
           username: username,
+          socketId: socket.id,
       });
       if(cb){
         cb(true)
@@ -117,7 +118,7 @@ io.on('connection', function(socket) {
   });
   socket.on('leaveRoom', async function(req,cb) {
     console.log('leaveRoom::::>>><<<:',req,cb)
-    const {roomId,userId} = req
+    const {roomId,userId,socketId} = req
     if(!roomId || !userId){
       if(cb){
         cb('userId or roomId error::::'+JSON.stringify(req),false)
@@ -131,7 +132,8 @@ io.on('connection', function(socket) {
           message: userId + '  :::: has leave room!',
           timestamp: moment().valueOf(),
           roomId:roomId,
-          userId:userId
+          userId:userId,
+          socketId: socket.id,
         });
       if(cb){
         cb(undefined,true)
@@ -146,7 +148,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('message', function(to,message) {
-    console.log('message::::::',message)
+    console.log('message::::::',socket.id,to,message)
     io.to(to).emit('message', message);
   });
 
@@ -160,7 +162,7 @@ io.on('connection', function(socket) {
       const {roomId,userId} = req
       socket.broadcast.to(roomId).emit(
       'typing', {
-        message: userId + '  :::: has joined!',
+        message: userId + '  :::: is typing!',
         timestamp: moment().valueOf(),
         roomId:roomId,
         userId:userId
@@ -183,7 +185,7 @@ io.on('connection', function(socket) {
 
 
   socket.on('allSocketsInRoom', async function(req,cb) {
-    console.log('allSocketsInRoom',req)
+    // log('allSocketsInRoom',req)
     // console.log('allSocketsInRoom::???: : ',typeof req,req,cb)
     const {roomId} = req
     let sockets= []
@@ -192,11 +194,13 @@ io.on('connection', function(socket) {
         new Error('roomId')
       }
       sockets = await io.of(nameSpace).adapter.sockets(new Set([roomId]));
+      // log('allSocketsInRoom',sockets)
       // console.log('sockets:::',JSON.stringify(sockets))
       if(cb){
         cb(undefined,Array.from(sockets))
       }
     }catch (e) {
+      // log('allSocketsInRoom',e)
       if(cb) {
         cb(e, [])
       }
@@ -208,15 +212,15 @@ io.on('connection', function(socket) {
 
 
   socket.on('allRooms', async function(cb) {
-    console.log('allRooms',cb)
     let rooms= new Set()
     try {
       rooms = await io.of(nameSpace).adapter.allRooms();
-      // console.log('rooms:::',Array.from(rooms),)
+      // log('allRooms',Array.from(rooms))
       if(cb){
         cb(undefined,Array.from(rooms))
       }
     }catch (e) {
+      // log('allRooms err',e)
       if(cb) {
         cb(e, [])
       }
@@ -224,7 +228,26 @@ io.on('connection', function(socket) {
 
     }
   });
+  socket.on('allSockets', async function(cb) {
+    let rooms= []
+    try {
+       const sids = await io.of(nameSpace).adapter.sids;
+      Array.from(sids).forEach(sid=>{
+          // console.log('sid',sid)
+         rooms.push(sid[0])
+      })
+      if(cb){
+        cb(undefined,rooms)
+      }
+    }catch (e) {
+      // log('allSockets err',e)
+      if(cb) {
+        cb(e, [])
+      }
+    }finally {
 
+    }
+  });
 });
 
 // io.of(nameSpace).adapter.pubClient.on('error', function(e){

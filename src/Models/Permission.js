@@ -1,8 +1,8 @@
-import {UserModel} from "./User";
+import {UserModel} from "./User.js";
 
-const {DataTypes } = require('sequelize');
-
-import {sequelize} from "../Config/db";
+import {sequelize} from "../Config/db.js";
+import * as Sequelize from "sequelize";
+const {DataTypes} =Sequelize.DataTypes
 
 const PermissionModel = sequelize.define('Permission', {
   id:{

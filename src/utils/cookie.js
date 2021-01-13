@@ -1,6 +1,6 @@
 import * as url from "url";
+import cookie from 'cookie'
 
-var cookie = require('cookie');
 
 export class Cookie {
   static setCookie(res,key,value){
@@ -10,8 +10,8 @@ export class Cookie {
     }))
   }
   static getCookies(req){
-    const cookies = cookie.parse(req.headers.cookie || '');
-    console.log('::::cookies::::',cookies)
+    const cookies = cookie.parse((req.headers.cookie?req.headers.cookie: req.headers.Cookie) || '');
+    // console.log('::::cookies::::',cookies)
     return typeof cookies==='object'?cookies:{};
   }
   static queryFromUrl(req){

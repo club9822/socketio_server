@@ -1,4 +1,4 @@
-// import {mongoose} from "../Config/db";
+// import {mongoose} from "../Config/db.js";
 // import {Schema} from 'mongoose'
 // const {Types} =Schema;
 //
@@ -13,11 +13,11 @@
 // });
 
 
-import {sequelize} from "../Config/db";
-import * as DataTypes from "sequelize";
-import {UserModel} from "./User";
-import {GroupModel} from "./Group";
-
+import {sequelize} from "../Config/db.js";
+import * as Sequelize from "sequelize";
+import {UserModel} from "./User.js";
+import {GroupModel} from "./Group.js";
+const {DataTypes} =Sequelize.DataTypes
 const MessageModel = sequelize.define('Message', {
   id:{
     type:DataTypes.INTEGER,
@@ -46,8 +46,6 @@ const MessageModel = sequelize.define('Message', {
   // Other model options go here
 });
 
-// MessageModel.belongsTo(UserModel);
-// MessageModel.belongsTo(GroupModel);
 
 export {MessageModel}
 // CREATE TABLE users (

@@ -1,10 +1,7 @@
-import {sequelize} from "../Config/db";
-import {UserModel} from "../Models/User";
-import {GroupModel} from "../Models/Group";
-import {MessageModel} from "../Models/Message";
-
-var express = require('express');
-var router = express.Router();
+import {sequelize} from "../Config/db.js";
+import {UserModel,GroupModel,MessageModel,PermissionModel} from '../Models/index.js'
+import express from  'express';
+const router = express.Router();
 
 
 /* GET home page. */
@@ -81,7 +78,13 @@ router.post('/group/create', async function(req, res, next) {
 
 router.get('/message', async function(req, res, next) {
   try{
-    const messages = await MessageModel.findAll()
+    const {groupId=null}=req.query
+    const where= {}
+    if(groupId){
+      where.GroupId=Number(groupId)
+    }
+    const messages = await MessageModel.findAll({ where:where,include:[{model:UserModel, as: 'User'}]})
+    // const messages = await MessageModel.findAll({where:where})
     res.send(messages)
   }catch (e){
     res.send(e)
@@ -90,8 +93,9 @@ router.get('/message', async function(req, res, next) {
 })
 router.post('/message/create', async function(req, res, next) {
   try{
-    const {text,type='text',groupId,status='active'}=req.body
-    const {id}=req.user
+    const {text,type='text',groupId,status='active',}=req.body
+    const {userId,username}=req.user
+    console.log('userId:',req.user)
     const message = await MessageModel.create({
       status:status,
       text:text,
@@ -101,9 +105,10 @@ router.post('/message/create', async function(req, res, next) {
       UserId:userId,
       GroupId:groupId
     });
-    res.send(message)
+    res.status(201).send({message:'',data:message})
   }catch (e){
-    res.send(e)
+    console.log(e)
+    res.status(400).send(e)
   }
 
 })
@@ -118,4 +123,4 @@ router.get('/user_groups', async function(req, res, next) {
 
 })
 
-module.exports = router;
+export default router
