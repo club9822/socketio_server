@@ -1,5 +1,5 @@
 import {sequelize} from "../Config/db.js";
-import {UserModel} from "../Models/User.js";
+import {UserModel} from "../Models/index.js";
 import {JWT} from "../Config/jwt.js";
 import express from  'express';
 const router = express.Router();

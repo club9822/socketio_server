@@ -1,24 +1,24 @@
 import {UserModel} from "./User.js";
 
 import {sequelize} from "../Config/db.js";
-import * as Sequelize from "sequelize";
-const {DataTypes} =Sequelize.DataTypes
-
+import Sequelize from "sequelize";
+const {DataTypes} =Sequelize
+const { INTEGER,STRING,ENUM,DATE} =DataTypes
 const PermissionModel = sequelize.define('Permission', {
   id:{
-    type:DataTypes.INTEGER,
+    type: INTEGER,
     primaryKey:true,
     autoIncrement: true
   },
   type: {
-    type:DataTypes.ENUM,
+    type: ENUM,
     values: ['write', 'pending', 'deleted'],
   },
   created_at:{
-    type:DataTypes.DATE,
+    type: DATE,
   },
   updated_at:{
-    type:DataTypes.DATE,
+    type: DATE,
   }
 }, {
   // Other model options go here

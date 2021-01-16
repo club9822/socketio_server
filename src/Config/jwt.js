@@ -4,7 +4,7 @@ import jwt  from 'jsonwebtoken'
 
 export class JWT {
   static generateToken(res, userId, username){
-    const expiration = process.env.DB_ENV === 'dev' ? 1000 : 604800000;
+    const expiration = process.env.DB_ENV === 'development' ? 1000 : 604800000;
     const token = jwt.sign({ userId:userId, username:username }, process.env.JWT_SECRET, {
       expiresIn: process.env.DB_ENV === 'testing' ? '1d' : '7d',
     });

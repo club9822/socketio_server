@@ -1,16 +1,17 @@
 import {GroupModel} from "./Group.js";
 
 import {sequelize} from "../Config/db.js";
-import * as Sequelize from "sequelize";
-const {DataTypes} =Sequelize.DataTypes
+import Sequelize from "sequelize";
+const {DataTypes} =Sequelize;
+const { INTEGER,STRING,ENUM,DATE} =DataTypes
 const UserModel = sequelize.define('User', {
   id:{
-    type:DataTypes.INTEGER,
+    type: INTEGER,
     primaryKey:true,
     autoIncrement: true
   },
   username: {
-    type: DataTypes.STRING,
+    type:  STRING,
     allowNull: false
   },
   // password: {
@@ -23,28 +24,28 @@ const UserModel = sequelize.define('User', {
   //   }
   // },
   name: {
-    type: DataTypes.STRING
+    type:  STRING
     // allowNull defaults to true
   },
   last_name:{
-    type:DataTypes.STRING
+    type: STRING
   },
   avatar:{
-    type:DataTypes.STRING
+    type: STRING
   },
   age:{
-    type:DataTypes.INTEGER,
+    type: INTEGER,
     default:0
   },
   status:{
-    type:DataTypes.ENUM,
+    type: ENUM,
     values: ['active', 'pending', 'deleted']
   },
   created_at:{
-    type:DataTypes.DATE,
+    type: DATE,
   },
   updated_at:{
-    type:DataTypes.DATE,
+    type: DATE,
   }
 }, {
   // Other model options go here

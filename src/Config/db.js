@@ -2,7 +2,7 @@
 // mongoose.connect(process.env.POSTGRESQL_SERVER, {useNewUrlParser: true, useUnifiedTopology: true});
 // export {mongoose}
 import {Sequelize} from  'sequelize';
-
+console.log(process.env)
 export const sequelize = new  Sequelize(process.env.POSTGRESQL_SERVER||'',{ pool: {
     max: 5,
     min: 0,

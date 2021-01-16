@@ -23,7 +23,8 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join('public')));
+// app.set('view engine', 'html');
 // express-session
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -39,6 +40,6 @@ app.use(function(req, res, next) {
 });
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/db',JWT.verifyToken,dbRouter)
-// app.use('/db',dbRouter)
+// app.use('/db',JWT.verifyToken,dbRouter)
+app.use('/db',dbRouter)
 export default app

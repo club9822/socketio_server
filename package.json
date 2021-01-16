@@ -1,10 +1,10 @@
 {
   "name": "socket",
-  "version": "0.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "build": "npm-run-all clean transpile",
-    "start": "nodemon --exec babel-node --legacy-watch src/bin/www.js",
+    "start": "nodemon --exec babel-node --legacy-watch -r dotenv/config src/bin/www.js",
     "server": "babel-node src/bin/www.js",
     "server:prod": "node ./dist/bin/www",
     "dev": "NODE_ENV=development npm-run-all server",

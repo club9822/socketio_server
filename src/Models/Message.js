@@ -14,33 +14,34 @@
 
 
 import {sequelize} from "../Config/db.js";
-import * as Sequelize from "sequelize";
+import Sequelize from "sequelize";
 import {UserModel} from "./User.js";
 import {GroupModel} from "./Group.js";
-const {DataTypes} =Sequelize.DataTypes
+const {DataTypes} =Sequelize
+const { INTEGER,TEXT,STRING,ENUM,DATE} =DataTypes
 const MessageModel = sequelize.define('Message', {
   id:{
-    type:DataTypes.INTEGER,
+    type: INTEGER,
     primaryKey:true,
     autoIncrement: true
   },
   text: {
-    type: DataTypes.TEXT,
+    type:  TEXT,
     allowNull: false
   },
   type:{
-    type:DataTypes.ENUM,
+    type: ENUM,
     values: ['text', 'file', 'sticker']
   },
   status:{
-    type:DataTypes.ENUM,
+    type: ENUM,
     values: ['active', 'pending', 'deleted']
   },
   created_at:{
-    type:DataTypes.DATE,
+    type:DATE,
   },
   updated_at:{
-    type:DataTypes.DATE,
+    type: DATE,
   }
 }, {
   // Other model options go here

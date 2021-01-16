@@ -1,7 +1,11 @@
 /**
  * Module dependencies.
  */
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 import dotenv from 'dotenv'
+// require('dotenv').config()
+dotenv.config({path:'/'})
 import app from '../app.js';
 import debugModule from 'debug';
 import http from 'http';
@@ -9,9 +13,9 @@ import redisAdapter from 'socket.io-redis';
 import moment from "moment";
 import Redis from 'ioredis';
 import {log} from "../utils/log.js";
-import {onError,normalizePort } from '../utils/errorHandling.js'
+import {onError,normalizePort } from '../utils/errorHandling.js';
 const debug = debugModule('socket:server');
-dotenv.config()
+
 /**
  * Get port from environment and store in Express.
  */
@@ -45,7 +49,7 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -60,7 +64,7 @@ server.on('listening', onListening);
 //   cors: {
 //     origin: "*",
 //   }});
-var io = require('socket.io')(server);
+const io = require('socket.io')(server);
 // TODO: complete in linux env
 // have problem in window 10
 // io.adapter(redisAdapter({
