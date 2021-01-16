@@ -40,6 +40,6 @@ app.use(function(req, res, next) {
 });
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-// app.use('/db',JWT.verifyToken,dbRouter)
-app.use('/db',dbRouter)
+app.use('/db',JWT.verifyToken,dbRouter)
+// app.use('/db',dbRouter)
 export default app
